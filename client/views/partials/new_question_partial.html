@@ -1,0 +1,29 @@
+<div ng-controller="NewQuestionController">
+	<a style="font-size:2em" href="#/dashboard">Home</a>
+	<a class="logoutBtn" href="/">Logout</a>
+	<hr><br>
+
+	<!-- {{user}} -->
+
+	<form name="form">
+		<label> Question: 
+			<textarea class="form-control" rows="3" cols="45" name="title" ng-model="newQuestion.title" ng-minlength="10" required></textarea>
+			<span class="red" ng-show="form.title.$dirty && form.title.$invalid">Title must be at least 10 characters in length!</span>
+			<span class="green" ng-show="form.title.$dirty && form.title.$valid">Noice!</span>
+		</label><br>
+		<label>Description (optional):
+			<textarea class="form-control" rows="3" cols="45" name="description" ng-model="newQuestion.description"></textarea>
+		</label><br><br>
+
+		<a href="#/dashboard" ng-click="addQuestion(user)"><button class="btn btn-primary" style="margin-left:320px" ng-disabled="form.title.$invalid">Submit</button></a>
+	</form>
+
+</div>
+
+
+
+
+
+
+
+

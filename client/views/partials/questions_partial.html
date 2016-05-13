@@ -1,0 +1,27 @@
+<div ng-controller="QuestionsController">
+	<a style="font-size:2em" href="#/dashboard">Home |</a>
+	<a style="font-size:2em" href="#/question/{{question[0]._id}}/new_answer">Answer this Question</a>
+	<a class="logoutBtn" href="/">Logout</a>
+	<hr><br>
+
+	<h1>{{question[0].title}}</h1>
+	<h4 style="margin-left:50px">{{question[0].description}}</h4>
+	<br>
+	<hr>
+	<div class="allAnswers">
+		<!-- {{ answers }} -->
+		<div class="eachAnswer" ng-repeat="answer in answers">
+			<h4>{{answer.user}} :</h4>
+			<p>{{answer.answer}}</p>
+			<p>{{answer.details}}</p>
+			<div class="likeBtns" aria-label="Right Align">
+				<p class="likes">{{answer.likes}} likes</p>
+				<button type="button" class="btn btn-default btn-primary" ng-click="addLike(answer._id)">
+					<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+				</button>
+			</div>
+			<hr>
+		</div>
+	</div>
+
+</div>

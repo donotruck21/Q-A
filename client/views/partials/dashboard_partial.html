@@ -1,0 +1,32 @@
+<div ng-controller="DashboardsController">
+	<h1 style="display:inline-block">Welcome, {{user}}</h1>
+	<a class="logoutBtn" href="/">Logout</a>
+	<hr>
+
+
+	<!-- {{questions}} -->
+	<a class="questionBtn" href="#/new_question">Add a New Question</a><br><br><br>
+
+	<label>
+		Search Questions:<input class="form-control searchField" ng-model="searchText.title"><br>
+	</label>
+	<table class="table table-hover table-bordered table-striped">
+		<thead>
+			<!-- <th class="info">User Name</th> -->
+			<th class="info">Question</th>
+			<th class="info">Answer</th>
+			<th class="info">Action</th>
+			<!-- <th class="info">Answers</th> -->
+		</thead>
+		<tbody>
+			<tr ng-repeat="question in questions | filter:searchText">
+				<!-- <td>{{question.user}}</td> -->
+				<td>{{question.title}}</td>
+				<td>{{question.answers.length}}</td>
+				<td><a href="#/question/{{question._id}}/new_answer">Answer Question</a> - <a href="#/question/{{question._id}}">Show All Answers</a></td>
+				<!-- <td>0</td> -->
+			</tr>
+		</tbody>
+	</table><br><br><br>
+	<hr>
+</div>

@@ -1,0 +1,8 @@
+{
+  	"name": "discussion_board",
+  	"dependencies": {
+    	"express": "~4.2.0",
+    	"mongoose": "latest",
+    	"body-parser": "latest"
+  	}
+}

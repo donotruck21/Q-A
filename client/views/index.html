@@ -1,0 +1,313 @@
+<html ng-app="BEapp">
+<head>
+	<title>MEAN Belt Exam 1</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+
+	<script type="text/javascript">
+		var BEapp = angular.module('BEapp', ['ngRoute']);
+
+		BEapp.config(function($routeProvider){
+			$routeProvider
+				.when('/', {
+					templateUrl: 'partials/main_partial.html'
+				})
+				.when('/dashboard', {
+					templateUrl: 'partials/dashboard_partial.html'
+				})
+				.when('/new_question', {
+					templateUrl: 'partials/new_question_partial.html'
+				})
+				.when('/question/:id', {
+					templateUrl: 'partials/questions_partial.html'
+				})
+				.when('/question/:id/new_answer', {
+					templateUrl: 'partials/new_answer_partial.html'
+				})
+				// .when('/user/:name', {
+				// 	templateUrl: 'partials/users_partial.html'
+				// })
+				.otherwise({
+					redirectTo: '/'
+				})
+		})
+
+		//////////////////////////////////////////////////////////////////
+
+		/////////////       
+		////         
+		///////
+		/// 
+		/// 
+		/// 
+
+		//////////////////////////////////////////////////////////////////
+
+
+		// USERS FACTORY
+		BEapp.factory('UserFactory', function($http) {
+			var factory = {};
+			var thisUser = null;
+
+			factory.create = function(user, callback) {
+				$http.post('/users', user).success(function(output) {
+					console.log('output:', output)
+					thisUser = output.name
+					callback(thisUser)
+				})
+			}
+
+			factory.getCurrentUser = function(callback) {
+				console.log("getting current user")
+				console.log(thisUser)
+				callback(thisUser)
+			}
+			return factory;
+		})
+
+		BEapp.factory('QuestionFactory', function($http) {
+			var factory = {};
+			var questions = [];
+
+			factory.create = function(question, user, callback) {
+				console.log(user)
+				question.name = user
+				console.log('question:', question)
+				$http.post('/questions', question).success(function(output){
+					if(output.errors){
+						alert("Please enter all fields!")
+					}else{
+						console.log("everything came back")
+						callback()
+					}
+				})
+			}
+
+			factory.getAll = function(callback) {
+				$http.get('/questions').success(function(output) {
+					questions = output;
+		    		callback(questions)
+				})
+			}
+
+			factory.getOne = function(question_id, callback) {
+				console.log('in factory', question_id)
+				$http.get('/questions/' + question_id.id).success(function(output) {
+					questions = output;
+		    		callback(questions)
+				})
+			}
+
+			return factory
+		})
+
+		BEapp.factory('AnswerFactory', function($http) {
+			var factory = {};
+			var answers = [];
+
+			factory.create = function (answer, user, question_id, question, callback) {
+				console.log('in answer factory')
+				console.log("answer:", answer)
+				console.log("user:", user)
+				answer.name = user
+				answer.question = question
+				answer.question_id = question_id
+				console.log("answer:", answer)
+
+				$http.post('/answers', answer).success(function(output){
+					if(output.errors){
+						alert("Please enter all fields!")
+					}else{
+						console.log("everything came back")
+						callback()
+					}
+				})
+			}
+
+			factory.getAll = function(question_id, callback) {
+				console.log('getting all answers for:',  question_id)
+				$http.get('/answers/' + question_id.id).success(function(output){
+					answers = output;
+		    		callback(answers)
+				})
+			}
+
+			factory.addLike = function(answer_id, callback) {
+				$http.post('/answers/like/' + answer_id).success(function(output){
+					callback()
+				})
+			}
+
+			return factory
+		})
+
+
+
+
+
+
+		//////////////////////////////////////////////////////////////////
+
+		    //////////
+		  ////
+		////
+		///
+		///
+		 ///
+		   /////////
+
+		//////////////////////////////////////////////////////////////////
+
+		BEapp.controller('UsersController', function($scope, UserFactory) {
+			$scope.addUser = function() {
+				console.log('entered:', $scope.newUser)
+				UserFactory.create($scope.newUser, function(data) {
+					$scope.currentUser = data
+				})
+			}
+		})
+
+
+		BEapp.controller('DashboardsController', function($scope, UserFactory, QuestionFactory) {
+			UserFactory.getCurrentUser(function(data) {
+				$scope.user = data;
+				console.log('in dash cont', $scope.user)
+			})
+
+			QuestionFactory.getAll(function(data) {
+				$scope.questions = data;
+			})
+
+		})
+
+
+		BEapp.controller('NewQuestionController', function($scope, UserFactory, QuestionFactory) {
+			UserFactory.getCurrentUser(function(data) {
+				$scope.user = data;
+				console.log('in dash cont', $scope.user)
+			})
+
+			$scope.addQuestion = function(user) {
+				console.log($scope.newQuestion)
+				console.log(user)
+				if($scope.newQuestion.title.length < 10){
+					alert("Title is too short! Must be at least 10 characters.")
+				}else{
+					console.log("EVERYTHING GOOD!")
+					QuestionFactory.create($scope.newQuestion, user, function() {
+						QuestionFactory.getAll(function(data) {
+							$scope.questions = data;
+						})
+						$scope.newQuestion = {};
+					})
+				}
+
+			}
+
+
+		})
+
+		BEapp.controller('QuestionsController', function($scope, $routeParams, QuestionFactory, UserFactory, AnswerFactory) {
+
+			var question_id = $routeParams
+			console.log(question_id)
+
+			UserFactory.getCurrentUser(function(data) {
+				$scope.user = data;
+			})
+
+			QuestionFactory.getOne(question_id, function(data) {
+				$scope.question = data;
+				// console.log('in dash cont', $scope.user)
+			})
+
+			AnswerFactory.getAll(question_id, function(data) {
+				$scope.answers = data
+			})
+
+			$scope.addLike = function(answer_id){
+				console.log(answer_id)
+				AnswerFactory.addLike(answer_id, function() {
+					console.log("made it back to front end, running this callback function NOW")
+					AnswerFactory.getAll(question_id, function(data) {
+						$scope.answers = data
+					})
+				})
+			}
+
+		})
+
+		BEapp.controller('NewAnswerController', function($scope, $routeParams, QuestionFactory, AnswerFactory, UserFactory) {
+			var question_id = $routeParams
+			console.log(question_id)
+
+			QuestionFactory.getOne(question_id, function(data) {
+				$scope.question = data;
+				// console.log('in dash cont', $scope.user)
+			})
+
+			UserFactory.getCurrentUser(function(data) {
+				$scope.user = data;
+			})
+
+			$scope.addAnswer = function(user, question_id, question) {
+				console.log($scope.newAnswer)
+				console.log(user)
+				console.log("QUESITON:", question)
+				if($scope.newAnswer.answer.length < 5){
+					alert("Answer is too short! Must be at least 5 characters.")
+				}else{
+					console.log("EVERYTHING GOOD!")
+					AnswerFactory.create($scope.newAnswer, user, question_id, question, function() {
+						console.log("made it back to front end, running this callback function NOW")
+						QuestionFactory.getAll(function(data) {
+							$scope.questions = data;
+						})
+						$scope.newAnswer = {};
+					})
+				}
+
+			}
+		})
+
+
+	</script>
+</head>
+
+<style type="text/css">
+	.red{
+		color: red;
+	}
+	.green{
+		color: green;
+	}
+	.questionBtn{
+		font-size: 2em;
+	}
+	.logoutBtn{
+		font-size: 2em;
+		float: right; 
+	}
+	.likes{
+		display: inline-block;
+		margin-left: 800px;
+	}
+</style>
+
+<body>
+	<div class="container">
+		<div ng-view="">
+		</div>
+	</div>
+</body>
+</html>

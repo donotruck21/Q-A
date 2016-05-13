@@ -1,0 +1,11 @@
+<div ng-controller="UsersController">
+	<h1>Welcome to Q&A</h1><br><br>
+	<h4>Please Enter Your Name!</h4>
+	<form name="userForm">
+		<input type="text" ng-model="newUser.name" name="user_name" ng-minlength="1" required>
+			<span ng-show="userForm.user_name.$dirty && userForm.user_name.$invalid">Please enter a name!</span>
+			<span ng-show="userForm.user_name.$dirty && userForm.user_name.$valid">Click Me! =></span>
+
+		<a href="#/dashboard" ng-click="addUser()"><button class="btn btn-primary" ng-disabled="userForm.user_name.$invalid">Enter</button></a>
+	</form>
+</div>

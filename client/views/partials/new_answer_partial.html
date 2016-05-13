@@ -1,0 +1,27 @@
+<div ng-controller="NewAnswerController">
+	<a style="font-size:2em" href="#/dashboard">Home |</a>
+	<a style="font-size:2em" href="#/question/{{question[0]._id}}">Go Back to Question</a>
+	<a class="logoutBtn" href="/">Logout</a>
+	<hr><br>
+
+	<h1>{{question[0].title}}</h1>
+	<!-- <h1>{{user}}</h1> -->
+	<h4 style="margin-left:50px">{{question[0].description}}</h4>
+	<br>
+	<hr>
+	<form name="form">
+		<label> Your Answer: 
+			<textarea class="form-control" rows="3" cols="45" name="answer" ng-model="newAnswer.answer" ng-minlength="5" required></textarea>
+			<span class="red" ng-show="form.answer.$dirty && form.answer.$invalid">Answer must be at least 5 characters in length!</span>
+			<span class="green" ng-show="form.answer.$dirty && form.answer.$valid">Noice!</span>
+		</label><br>
+		<label>Supporting Details (optional):
+			<textarea class="form-control" rows="3" cols="45" name="details" ng-model="newAnswer.details"></textarea>
+		</label><br><br>
+
+		<a href="#/dashboard"><button class="btn btn-danger" style="margin-left:220px">Cancel</button></a>
+		<a href="#/dashboard" ng-click="addAnswer(user, question[0]._id, question[0].title)"><button class="btn btn-primary" ng-disabled="form.answer.$invalid">Submit</button></a>
+	</form>
+
+
+</div>
